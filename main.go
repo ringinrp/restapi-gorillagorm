@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"restapi-gorilla/controllers/productcontroller"
+	"restapi-gorilla/models"
 
 	"github.com/gorilla/mux"
 )
@@ -10,14 +12,14 @@ import (
 func main() {
 	route := mux.NewRouter()
 
-	route.HandleFunc("/", home).Methods("GET")
+	models.ConnectDatabase()
 
-	fmt.Println("Server running on port 8000")
-	http.ListenAndServe("localhost:8000", route)
-}
+	route.HandleFunc("/products", productcontroller.Home).Methods("GET")
+	route.HandleFunc("/product/{id}", productcontroller.Show).Methods("GET")
+	route.HandleFunc("/product", productcontroller.Create).Methods("POST")
+	route.HandleFunc("/product/{id}", productcontroller.Update).Methods("PUT")
+	route.HandleFunc("/product", productcontroller.Delete).Methods("DELETE")
 
-func home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/html; charset=utf-8")
-
-	fmt.Println("Hello semua")
+	fmt.Println("Server running on port 8080")
+	http.ListenAndServe("localhost:8080", route)
 }
